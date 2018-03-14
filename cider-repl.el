@@ -681,8 +681,7 @@ If BOL is non-nil insert at the beginning of line.  Run
           (when (and (= (point) cider-repl-prompt-start-mark)
                      (not (bolp)))
             (insert-before-markers "\n")
-            (set-marker cider-repl-output-end (1- (point)))))))
-    (cider-repl--show-maximum-output)))
+            (set-marker cider-repl-output-end (1- (point)))))))))
 
 (defun cider-repl--emit-interactive-output (string face)
   "Emit STRING as interactive output using FACE."
@@ -749,8 +748,7 @@ of the line.  If BOL is non-nil insert at the beginning of the line."
               (insert-before-markers (cider-font-lock-as-clojure string))
             (cider-propertize-region
                 '(font-lock-face cider-repl-result-face rear-nonsticky (font-lock-face))
-              (insert-before-markers string))))))
-    (cider-repl--show-maximum-output)))
+              (insert-before-markers string))))))))
 
 (defun cider-repl-newline-and-indent ()
   "Insert a newline, then indent the next line.
@@ -835,8 +833,7 @@ If NEWLINE is true then add a newline at the end of the input."
       (let ((end (point)))              ; end of input, without the newline
         (cider-repl--add-to-input-history input)
         (when newline
-          (insert "\n")
-          (cider-repl--show-maximum-output))
+          (insert "\n"))
         (let ((inhibit-modification-hooks t))
           (add-text-properties cider-repl-input-start-mark
                                (point)
