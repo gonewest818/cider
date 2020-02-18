@@ -780,19 +780,19 @@ EVAL-ERROR-HANDLER is nil, the default `nrepl-err-handler' is used.  If any
 of the other supplied handlers are nil nothing happens for the
 corresponding type of response."
   (lambda (response)
-    (nrepl-dbind-response response (value ns out err status id pprint-out)
+    (nrepl-dbind-response response (value ns out err status id pprint-out truncate-hash)
       (when (buffer-live-p buffer)
         (with-current-buffer buffer
           (when (and ns (not (derived-mode-p 'clojure-mode)))
             (cider-set-buffer-ns ns))))
       (cond (value
              (when value-handler
-               (funcall value-handler buffer value)))
+               (funcall value-handler buffer value truncate-hash)))
             (out
              (when stdout-handler
                (funcall stdout-handler buffer out)))
             (pprint-out
-             (cond (pprint-out-handler (funcall pprint-out-handler buffer pprint-out))
+             (cond (pprint-out-handler (funcall pprint-out-handler buffer pprint-out truncate-hash))
                    (stdout-handler (funcall stdout-handler buffer pprint-out))))
             (err
              (when stderr-handler

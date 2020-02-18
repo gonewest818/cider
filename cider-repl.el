@@ -732,7 +732,7 @@ If BOL is non-nil, emit at the beginning of the line."
           (cider-repl--insert-prompt cider-buffer-ns))))
     (cider-repl--show-maximum-output)))
 
-(defun cider-repl-emit-result (buffer string show-prefix &optional bol)
+(defun cider-repl-emit-result (buffer string show-prefix truncated &optional bol)
   "Emit into BUFFER the result STRING and mark it as an evaluation result.
 If SHOW-PREFIX is non-nil insert `cider-repl-result-prefix' at the beginning
 of the line.  If BOL is non-nil insert at the beginning of the line."
@@ -803,8 +803,11 @@ the symbol."
   "Make an nREPL evaluation handler for the REPL BUFFER."
   (nrepl-make-response-handler buffer
                                (let (after-first-result-chunk)
-                                 (lambda (buffer value)
-                                   (cider-repl-emit-result buffer value (not after-first-result-chunk) t)
+                                 (lambda (buffer value truncated)
+                                   (cider-repl-emit-result buffer value
+                                                           (not after-first-result-chunk)
+                                                           truncated
+                                                           t)
                                    (setq after-first-result-chunk t)))
                                (lambda (buffer out)
                                  (cider-repl-emit-stdout buffer out))
@@ -814,8 +817,10 @@ the symbol."
                                  (cider-repl-emit-prompt buffer))
                                nrepl-err-handler
                                (let (after-first-result-chunk)
-                                 (lambda (buffer pprint-out)
-                                   (cider-repl-emit-result buffer pprint-out (not after-first-result-chunk))
+                                 (lambda (buffer pprint-out truncated)
+                                   (cider-repl-emit-result buffer pprint-out
+                                                           (not after-first-result-chunk)
+                                                           truncated)
                                    (setq after-first-result-chunk t)))))
 
 (defun cider-repl--send-input (&optional newline)
